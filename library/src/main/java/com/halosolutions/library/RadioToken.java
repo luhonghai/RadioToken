@@ -82,9 +82,14 @@ public class RadioToken {
             }
             Call<String> auth2Call = radioService.auth2(authToken, partialKey, location);
             Response<String> auth2Response = auth2Call.execute();
-            Timber.i("Auth2 response " + auth2Response.body());
+            String resBody = auth2Response.body().trim();
+            Timber.i("Auth2 response " + resBody);
             if (auth2Response.isSuccessful()) {
                 AuthToken token = new AuthToken();
+                token.setRaw(resBody);
+                if (resBody.startsWith("JP")) {
+                    token.setAreaId(resBody.split(",")[0]);
+                }
                 token.setToken(authToken);
                 return token;
             } else {
